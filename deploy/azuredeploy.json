@@ -57,6 +57,7 @@
             ],
             "properties": {
                 "netFrameworkVersion": "v7.0",
+                "managedPipelineMode": "Integrated",
                 "minTlsVersion": "1.2",
                 "scmMinTlsVersion": "1.2",
                 "ftpsState": "FtpsOnly"
