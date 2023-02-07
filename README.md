@@ -7,3 +7,4 @@ This repsository contains a simple web application, written in .NET, that displa
 - An Azure subscription
 - An Azure identity with permissions to deploy to the subscription
 - GitHub secrets for the Azure identity
+
