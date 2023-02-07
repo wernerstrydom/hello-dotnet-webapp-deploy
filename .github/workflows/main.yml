@@ -48,7 +48,8 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           resourceGroupName: "${{ env.APP_NAME }}-WUS"
           deploymentName: hello-1.0.${{github.run_number}}
-      
+      - name: List Files
+        run: ls -alR .
       - name: Deploy
         uses: azure/webapps-deploy@v2
         id: fa
