@@ -3,6 +3,14 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+env:
+  SRC_PATH: 'src' 
+  OUTPUT_PATH: 'output' 
+  DEPLOY_PATH: 'deploy' 
+  DOTNET_VERSION: '7.0.x' 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,13 +19,44 @@ jobs:
         working-directory: ./src
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK 7.0.x
+      
+      - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore ${{ env.SRC_PATH }}/Hello.sln
+      
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-restore --output ${{ env.OUTPUT_PATH }}
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Provision
+        id: deploy
+        uses: azure/arm-deploy@v1
+        with:
+          template: ${{ env.DEPLOY_PATH }}/azuredeploy.json
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: "Hello-WUS"
+          deploymentName: hello-1.0.${{github.run_number}}
+      
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        id: fa
+        with:
+          app-name: ${{steps.deploy.outputs.siteName}}
+          slot-name: 'Production'
+          package: '${{ env.OUTPUT_PATH }}'
+
+      
+
+
+
+
 
       
