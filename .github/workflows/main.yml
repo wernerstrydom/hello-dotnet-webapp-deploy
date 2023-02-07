@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 env:
+  APP_NAME: 'Hello'
   SRC_PATH: 'src' 
   OUTPUT_PATH: 'output' 
   DEPLOY_PATH: 'deploy' 
@@ -33,13 +34,19 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Provision
+      - name: Provision Resource Group
+        run: |
+          if [ $(az group exists --name "${{ env.APP_NAME }}-WUS") = false ]; then
+            az group create --name "${{ env.APP_NAME }}-WUS" --location "West US"
+          fi 
+
+      - name: Provision Resources
         id: deploy
         uses: azure/arm-deploy@v1
         with:
           template: ${{ env.DEPLOY_PATH }}/azuredeploy.json
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          resourceGroupName: "Hello-WUS"
+          resourceGroupName: "${{ env.APP_NAME }}-WUS"
           deploymentName: hello-1.0.${{github.run_number}}
       
       - name: Deploy
