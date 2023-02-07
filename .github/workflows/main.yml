@@ -27,7 +27,10 @@ jobs:
         run: dotnet restore ${{ env.SRC_PATH }}/Hello.sln
       
       - name: Build
-        run: dotnet build ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-restore --output ${{ env.OUTPUT_PATH }}
+        run: dotnet build ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-restore 
+
+      - name: Publish
+        run: dotnet publish ${{ env.SRC_PATH }}/Hello.sln --no-build --no-restore --output ${{ env.OUTPUT_PATH }}
 
       - name: Azure Login
         uses: azure/login@v1
