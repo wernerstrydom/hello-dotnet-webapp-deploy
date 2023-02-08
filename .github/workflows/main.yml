@@ -63,7 +63,7 @@ jobs:
       - name: Test
         run: dotnet test ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-build --no-restore 
         env:
-          WEBSITE: ${{steps.deploy.outputs.url}}
+          WEBAPP_URL: "https://${{steps.deploy.outputs.url}}"
 
 
       
