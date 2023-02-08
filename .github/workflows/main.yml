@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
-      - name: Install dependencies
+      - name: Restore
         run: dotnet restore ${{ env.SRC_PATH }}/Hello.sln
       
       - name: Build
@@ -65,8 +65,6 @@ jobs:
         env:
           WEBAPP_URL: "https://${{steps.deploy.outputs.url}}"
 
-
-      
 
 
 
