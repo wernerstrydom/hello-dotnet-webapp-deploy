@@ -30,7 +30,7 @@ jobs:
         run: dotnet build ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-restore 
 
       - name: Publish
-        run: dotnet publish ${{ env.SRC_PATH }}/Hello.sln --no-build --no-restore --configuration Release --output ${{ env.OUTPUT_PATH }}
+        run: dotnet publish ${{ env.SRC_PATH }}/Hello/Hello.csproj --no-build --no-restore --configuration Release --output ${{ env.OUTPUT_PATH }}
 
       - name: Azure Login
         uses: azure/login@v1
@@ -51,8 +51,7 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           resourceGroupName: "${{ env.APP_NAME }}-WUS"
           deploymentName: hello-1.0.${{github.run_number}}
-      - name: List Files
-        run: ls -alR .
+      
       - name: Deploy
         uses: azure/webapps-deploy@v2
         id: fa
@@ -60,6 +59,12 @@ jobs:
           app-name: ${{steps.deploy.outputs.siteName}}
           slot-name: 'Production'
           package: '${{ env.OUTPUT_PATH }}'
+    
+      - name: Test
+        run: dotnet test ${{ env.SRC_PATH }}/Hello.sln --configuration Release --no-build --no-restore 
+        env:
+          WEBSITE: ${{steps.deploy.outputs.url}}
+
 
       
 
